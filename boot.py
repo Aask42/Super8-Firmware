@@ -3,12 +3,13 @@
 from machine import I2C, Pin
 import time
 
-PETAL_ADDRESS      = 0x00
-TOUCHWHEEL_ADDRESS = 0x54
+# I2C Addresses for Known SAOs
+PETAL_ADDRESS      = 0x00 ## Supercon 8 Petal SAO
+TOUCHWHEEL_ADDRESS = 0x54 ## Supercon 8 Touchwheel SAO
 
 # Testing options
 bootLED = Pin("LED", Pin.OUT)
-bootLED.on()
+bootLED.on()                    ## Turn on the LED at boot
 
 ## buttons
 buttonA = Pin(8, Pin.IN, Pin.PULL_UP)
@@ -79,25 +80,25 @@ def petal_init(bus):
 ## can't use scan logic for petal b/c it's at address 0
 ## so wrapping the init routine it try: blocks should also work
 ## later on can test if petal_bus is None
-petal_bus = None
-try:
-    petal_init(i2c0)
-    petal_bus = i2c0
-except: 
-    pass
-try:
-    petal_init(i2c1)
-    petal_bus = i2c1
-except:
-    pass
-if not petal_bus:
-    print(f"Warning: Petal not found.")
+# petal_bus = None
+# try:
+#     petal_init(i2c0)
+#     petal_bus = i2c0
+# except: 
+#     pass
+# try:
+#     petal_init(i2c1)
+#     petal_bus = i2c1
+# except:
+#     pass
+# if not petal_bus:
+#     print(f"Warning: Petal not found.")
 
 
 ## waiting for wheel with a yellow light
-if petal_bus:
-    petal_bus.writeto_mem(PETAL_ADDRESS, 3, bytes([0x80]))
-    petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x80]))
+# if petal_bus:
+#     petal_bus.writeto_mem(PETAL_ADDRESS, 3, bytes([0x80]))
+#     petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x80]))
 
 ## touchwheel last, with a wait loop,  b/c it doesn't init until animation is over
 ## probably need to implement a timeout here?
@@ -128,11 +129,11 @@ def touchwheel_rgb(bus, r, g, b):
 
 
 ## goes green if wheel configured
-if touchwheel_bus and petal_bus:
-    petal_bus.writeto_mem(PETAL_ADDRESS, 3, bytes([0x00]))
-if petal_bus:
-    petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x80]))
-    time.sleep_ms(200)
-    petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x00]))
+# if touchwheel_bus and petal_bus:
+#     petal_bus.writeto_mem(PETAL_ADDRESS, 3, bytes([0x00]))
+# if petal_bus:
+#     petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x80]))
+#     time.sleep_ms(200)
+#     petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x00]))
 
 
