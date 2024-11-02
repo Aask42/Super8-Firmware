@@ -3,9 +3,6 @@ import time
 import uasyncio as asyncio
 
 counter = 0
-
-## do a quick spiral to test
-
           
 def sub_cb(topic, msg):
     msg_string = msg.decode("UTF-8")
@@ -28,6 +25,12 @@ async def main():
     
     from src.wifi_manager import WiFiConnection
     from src.mqtt_manager import MQTTManager
+
+    # Known SAO HALs
+    from sao.super8_petal import Super8Petal
+
+    sao_super8_petal = Super8Petal([i2c0, i2c1], 0x00)
+
     
     if "YOURWIFINETWORK" != WIFI_LIST[0][0]:
         wifi_manager = WiFiConnection()
