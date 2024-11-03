@@ -159,16 +159,15 @@ while true; do
             # Write configuration to file
             cat <<EOL > "$config_file"
 # MQTT Configuration
-MQTT_USERNAME = b"$email"
+MQTT_USERNAME = b"badge_$email"
 MQTT_PASSWORD = b"$broker_password"
 MQTT_SERVER=b"mqtt.super8.dev"
 MQTT_CLIENT_ID="$email"
 EOL
             echo "Configuration file created at: $config_file"
 
-            # TODO: Use Python library from super8-register here
             # Send a POST request with the email and password (optional)
-            url="http://edgelord.hm.unnecessary.llc:8008/register"  # Replace with the actual URL
+            url="http://super8.dev:8008/register"  # Replace with the actual URL
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$url" \
               -H "Content-Type: application/json" \
               -d "{\"username\": \"$email\", \"password\": \"$broker_password\"}")
@@ -185,14 +184,16 @@ EOL
             # Reset device after copying files
             echo "Resetting the device..."
             #rshell -p $port repl "~\x03~"  # Stop running scripts
-            #rshell -p $port repl "~\x04~"  # Soft reset
+            rshell -p $port repl "~\x04~"  # Soft reset
 
             # Wait for device to be unplugged before continuing
             echo "Please unplug the device to complete the process."
             while [ -e "$port" ]; do
                 sleep 1
             done
-
+            echo 'Device flashed, please go to super8.dev and log in with'
+            echo "$email as your username and your selected password to "
+            echo "control your device. "
             echo "Device unplugged. Process complete. Waiting for the next device..."
         done
     fi

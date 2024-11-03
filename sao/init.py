@@ -42,7 +42,6 @@ init_config = {
       "payload": [0]
     },
     {
-        # Write Red
       "action": "i2c-write-mem",
       "i2c-mem-addr": 2,
       "payload": [0]

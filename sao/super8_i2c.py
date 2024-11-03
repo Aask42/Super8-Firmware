@@ -2,7 +2,7 @@
 from machine import I2C
 from sao.init import init_config
 import boot  # Import boot.py to access i2c0 and i2c1
-
+import time
 class Super8I2C:
     def __init__(self, i2c_busses, device_config=None):
         self.i2c_bus = None
@@ -18,18 +18,30 @@ class Super8I2C:
 
     def bootstrap(self, i2c_bus):
         # Attempt each init command in the configuration
-        for item in self.device_config.get('init', []):
+        i2c_address = self.device_config.get('i2c_address')
+        for item in self.device_config.get('commands', []):
             try:
                 action = item.get("action")
-                payload = bytes(item.get("payload", []))
-                
+                print(f'expected action: {action}')
                 if action == "i2c-write-mem":
+                    payload = bytes(item.get("payload", []))
+
                     i2c_mem_addr = item.get("i2c-mem-addr")
-                    print(f"writing address {self.i2c_address} on address: {i2c_mem_addr} with this payload {payload}")
+                    print(f"writing address {i2c_address} on address: {i2c_mem_addr} with this payload {payload}")
 
                     i2c_bus.writeto_mem(self.i2c_address, i2c_mem_addr, payload)
                 elif action == "i2c-write":
-                    i2c_bus.writeto(self.i2c_address, payload)
+                    try:
+                        print("Getting payload for i2c-write")
+                        payload = bytes(item.get("payload", []))
+                    except:
+                        print("issues with i2c-write payload")
+                    for address in payload:
+                        i2c_bus.writeto(i2c_address, address)
+                elif action == "delay":
+                    delay_ms = int(item.get("duration_ms", []))
+                    print(f"Delaying: {delay_ms}")
+                    time.sleep_ms(delay_ms)
             except Exception as e:
                 print(f"Error during bootstrap for {self.device_name} on I2C bus: {e}")
                 raise  # Re-raise to stop if there's an issue with this bus

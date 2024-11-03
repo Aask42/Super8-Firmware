@@ -34,16 +34,39 @@ if petal_bus:
 
 def sub_cb(topic, msg, MQTT_CLIENT_ID, petal_bus):
     msg_string = msg.decode("UTF-8")
-    print(f"Received message: {msg} on topic: {topic.decode()} ")
+    #print(f"Received message: {msg_string} on topic: {topic.decode()} ")
     main_topic = f'user/{MQTT_CLIENT_ID}'
     print(f'main_topic: {main_topic} vs {topic.decode()}')
     if topic.decode() == main_topic or topic.decode() == "badge_broadcast":
        
         print("do stuff")
+        #petal_bus = None
+        if petal_bus:
+            for j in range(1):  # Adjust the range for the number of cycles you want
+                # Forward wave
+                for shift in range(8):
+                    which_leds = (1 << (shift + 1)) - 1
+                    for i in range(1, 9):
+                        #print(which_leds)
+                        petal_bus.writeto_mem(PETAL_ADDRESS, i, bytes([which_leds]))
+                        time.sleep_ms(10)
+                    time.sleep_ms(1)  # Pause at the end of each wave
+
+                # Reverse wave
+                for shift in range(7, -1, -1):
+                    which_leds = (1 << (shift + 1)) - 1
+                    for i in range(1, 9):
+                        #print(which_leds)
+                        petal_bus.writeto_mem(PETAL_ADDRESS, i, bytes([which_leds]))
+                        time.sleep_ms(10)
+                    time.sleep_ms(1)  # Pause at the end of each reverse wave
+                for i in range(1, 9):
+                    petal_bus.writeto_mem(PETAL_ADDRESS, i, bytes([0]))
         try:
-            init_config = json.dumps(msg_string)
-            print(f"Attempting to use the config object {init_config}")
-            Super8I2C(i2c_busses=[i2c0, i2c1], device_config=init_config)
+            init_config = json.loads(msg_string)
+            #print(f"Attempting to use the config object {msg_string}")
+            a = Super8I2C(i2c_busses=[i2c0, i2c1], device_config=init_config)
+            a = None
         except:
             print("Issues talking to the i2c device...")
         """
