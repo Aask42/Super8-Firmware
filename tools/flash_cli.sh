@@ -99,7 +99,20 @@ copy_files() {
     local config_dir=$2
     if [ -d "$config_dir" ]; then
         echo "Copying files to device at ${port} with config ${config_dir}..."
-        rshell -p ${port} cp --recursive ${config_dir}/* /pyboard/CONFIG
+        rshell -p ${port} << EOF
+        mkdir /pyboard/CONFIG
+        mkdir /pyboard/src
+        mkdir /pyboard/sao
+        mkdir /pyboard/lib
+
+        cp --recursive ${config_dir}/* /pyboard/CONFIG
+        cp --recursive CONFIG/*.py /pyboard/CONFIG
+        cp --recursive src/* /pyboard/src
+        cp --recursive sao/* /pyboard/sao
+        cp --recursive lib/* /pyboard/lib
+        cp --recursive *.py /pyboard/
+EOF
+        
         echo "Files copied to device at ${port}."
     else
         echo "Configuration directory ${config_dir} not found. Exiting..."
@@ -146,18 +159,19 @@ while true; do
             # Write configuration to file
             cat <<EOL > "$config_file"
 # MQTT Configuration
-EMAIL = b"$email"
-BROKER_PASSWORD = b"$broker_password"
-MQTT_SERVER=b"aask.services"
-MQTT_CLIENT_ID=b"$email"
+MQTT_USERNAME = b"$email"
+MQTT_PASSWORD = b"$broker_password"
+MQTT_SERVER=b"edgelord.hm.unnecessary.llc"
+MQTT_CLIENT_ID="$email"
 EOL
             echo "Configuration file created at: $config_file"
 
+            # TODO: Use Python library from super8-register here
             # Send a POST request with the email and password (optional)
-            url="https://example.com/api/endpoint"  # Replace with the actual URL
+            url="http://edgelord.hm.unnecessary.llc:8008/register"  # Replace with the actual URL
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$url" \
               -H "Content-Type: application/json" \
-              -d "{\"email\": \"$email\", \"password\": \"$broker_password\"}")
+              -d "{\"username\": \"$email\", \"password\": \"$broker_password\"}")
 
             if [ "$response" -eq 200 ]; then
                 echo "POST request successful."
