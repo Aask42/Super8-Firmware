@@ -79,6 +79,7 @@ def petal_init(bus):
 ## can't use scan logic for petal b/c it's at address 0
 ## so wrapping the init routine it try: blocks should also work
 ## later on can test if petal_bus is None
+'''
 petal_bus = None
 try:
     petal_init(i2c0)
@@ -134,3 +135,5 @@ if petal_bus:
     petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x80]))
     time.sleep_ms(200)
     petal_bus.writeto_mem(PETAL_ADDRESS, 2, bytes([0x00]))
+'''
+
