@@ -5,6 +5,7 @@ import gc
 from sao.super8_i2c import Super8I2C
 import json
 from boot import i2c0, i2c1
+from sao.init import init_config
 
 counter = 0
 ## do a quick spiral to test
@@ -81,7 +82,7 @@ async def main():
 
     #sao_super8_petal = Super8Petal([i2c0, i2c1], 0x00)
     #sao_super8_petal.illuminate_all_segments()
-    
+    Super8I2C(i2c_busses=[i2c0, i2c1], device_config=init_config)
     if "YOURWIFINETWORK" != WIFI_LIST[0][0]:
         wifi_manager = WiFiConnection()
         await wifi_manager.main()
@@ -103,4 +104,5 @@ async def main():
         await asyncio.sleep_ms(100)
 
 asyncio.run(main())
+
 
