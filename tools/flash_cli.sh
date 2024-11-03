@@ -161,7 +161,7 @@ while true; do
 # MQTT Configuration
 MQTT_USERNAME = b"$email"
 MQTT_PASSWORD = b"$broker_password"
-MQTT_SERVER=b"edgelord.hm.unnecessary.llc"
+MQTT_SERVER=b"mqtt.super8.dev"
 MQTT_CLIENT_ID="$email"
 EOL
             echo "Configuration file created at: $config_file"
