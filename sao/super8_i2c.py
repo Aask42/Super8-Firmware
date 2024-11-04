@@ -18,7 +18,6 @@ class Super8I2C:
 
     def bootstrap(self, i2c_bus):
         # Attempt each init command in the configuration
-        i2c_address = self.device_config.get('i2c_address')
         for item in self.device_config.get('commands', []):
             try:
                 action = item.get("action")
@@ -27,17 +26,12 @@ class Super8I2C:
                     payload = bytes(item.get("payload", []))
 
                     i2c_mem_addr = item.get("i2c-mem-addr")
-                    print(f"writing address {i2c_address} on address: {i2c_mem_addr} with this payload {payload}")
+                    print(f"writing address {self.i2c_address} on address: {i2c_mem_addr} with this payload {payload}")
 
                     i2c_bus.writeto_mem(self.i2c_address, i2c_mem_addr, payload)
                 elif action == "i2c-write":
-                    try:
-                        print("Getting payload for i2c-write")
-                        payload = bytes(item.get("payload", []))
-                    except:
-                        print("issues with i2c-write payload")
-                    for address in payload:
-                        i2c_bus.writeto(i2c_address, address)
+                    payload = bytes(item.get("payload", []))
+                    i2c_bus.writeto(self.i2c_address, payload)
                 elif action == "delay":
                     delay_ms = int(item.get("duration_ms", []))
                     print(f"Delaying: {delay_ms}")

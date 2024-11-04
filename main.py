@@ -65,8 +65,7 @@ def sub_cb(topic, msg, MQTT_CLIENT_ID, petal_bus):
         try:
             init_config = json.loads(msg_string)
             #print(f"Attempting to use the config object {msg_string}")
-            a = Super8I2C(i2c_busses=[i2c0, i2c1], device_config=init_config)
-            a = None
+            Super8I2C(i2c_busses=[i2c0, i2c1], device_config=init_config)
         except:
             print("Issues talking to the i2c device...")
         """

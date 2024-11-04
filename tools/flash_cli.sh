@@ -167,7 +167,7 @@ EOL
             echo "Configuration file created at: $config_file"
 
             # Send a POST request with the email and password (optional)
-            url="http://super8.dev:8008/register"  # Replace with the actual URL
+            url="http://mqtt.super8.dev:8008/register"  # Replace with the actual URL
             response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$url" \
               -H "Content-Type: application/json" \
               -d "{\"username\": \"$email\", \"password\": \"$broker_password\"}")
