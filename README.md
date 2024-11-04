@@ -30,7 +30,7 @@ Setup Process
 1. Clone the Super8-Firmware Repository
 - Start by cloning this repository to get the necessary files:
 - git clone https://github.com/aask42/Super8-Firmware.git
-cd Super8-Firmware
+- cd Super8-Firmware
 
 2. Run the Auto-Flash Script
 - Super8 includes an auto-flash.sh shell script that will automatically flash the firmware to your badge. Run the script by entering the following command:
